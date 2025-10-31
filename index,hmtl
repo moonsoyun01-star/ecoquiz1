@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 생태·환경 퀴즈 게임</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Pretendard", sans-serif; }
+  body {
+    background: linear-gradient(135deg, #c9f3d4, #a8e6cf);
+    height: 100vh; display: flex; align-items: center; justify-content: center;
+  }
+  .quiz-container {
+    background: white; width: 90%; max-width: 500px; border-radius: 20px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 30px; text-align: center;
+    animation: fadeIn 0.8s ease;
+  }
+  h1 { font-size: 1.8em; color: #2b7a4b; margin-bottom: 15px; }
+  .question { font-size: 1.2em; margin: 20px 0; color: #333; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  button {
+    background: #88d498; color: white; border: none; padding: 12px;
+    border-radius: 10px; font-size: 1em; cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  button:hover { background: #6fbf7a; transform: scale(1.02); }
+  .next-btn {
+    background: #57cc99; margin-top: 20px; display: none;
+  }
+  .result {
+    font-size: 1.3em; color: #2b7a4b; display: none;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h1>🌿 생태·환경 퀴즈</h1>
+  <div class="question" id="question">문제 로딩 중...</div>
+  <div class="options" id="options"></div>
+  <button class="next-btn" id="nextBtn">다음</button>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+const quizData = [
+  { q: "지구의 평균 기온 상승의 주요 원인은?", a: ["이산화탄소 증가", "태양 활동 감소", "지진 증가", "빙하 형성"], correct: 0 },
+  { q: "바다 거북이 플라스틱을 먹는 이유는?", a: ["냄새 때문", "해파리로 착각해서", "배가 고파서", "본능적으로"], correct: 1 },
+  { q: "다음 중 재생에너지에 해당하지 않는 것은?", a: ["태양광", "풍력", "석탄", "수력"], correct: 2 },
+  { q: "탄소중립의 의미는?", a: ["탄소를 줄이지 않는 것", "배출량과 흡수량을 같게 하는 것", "탄소를 모으는 것", "이산화탄소를 없애는 것"], correct: 1 },
+  { q: "벌의 개체 수가 줄면 가장 큰 영향을 받는 것은?", a: ["농작물 수확량", "물고기 수", "기온", "비용"], correct: 0 },
+  { q: "지구 온난화로 인해 녹고 있는 지역은?", a: ["사하라 사막", "북극", "아마존", "태평양"], correct: 1 },
+  { q: "음식물 쓰레기를 줄이는 가장 좋은 방법은?", a: ["냉장고에 오래 보관", "필요한 만큼만 구매", "모든 음식 섞기", "남긴 음식 버리기"], correct: 1 },
+  { q: "바다 오염의 주요 원인 중 하나는?", a: ["산성비", "플라스틱 쓰레기", "지진", "태풍"], correct: 1 },
+  { q: "‘지속가능한 발전’의 핵심은?", a: ["미래 세대의 필요 고려", "현재만 생각", "기술 무시", "환경보다 경제 우선"], correct: 0 },
+  { q: "환경 보호를 위해 우리가 할 수 있는 일은?", a: ["재활용 실천", "무분별한 소비", "자동차 공회전", "전기 낭비"], correct: 0 }
+];
+
+let current = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const resultEl = document.getElementById("result");
+
+function loadQuestion() {
+  const item = quizData[current];
+  questionEl.textContent = `${current + 1}. ${item.q}`;
+  optionsEl.innerHTML = "";
+  item.a.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(i) {
+  const correct = quizData[current].correct;
+  const buttons = optionsEl.querySelectorAll("button");
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === correct) btn.style.background = "#57cc99";
+    else if (idx === i && i !== correct) btn.style.background = "#ef476f";
+  });
+  if (i === correct) score++;
+  nextBtn.style.display = "block";
+}
+
+nextBtn.addEventListener("click", () => {
+  current++;
+  nextBtn.style.display = "none";
+  if (current < quizData.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  questionEl.style.display = "none";
+  optionsEl.style.display = "none";
+  nextBtn.style.display = "none";
+  resultEl.style.display = "block";
+  resultEl.innerHTML = `🌱 퀴즈 완료!<br>당신의 점수는 <b>${score}/${quizData.length}</b>점입니다.`;
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
